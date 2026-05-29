@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Anonymous Address-Bar Search</title>
+    <style>
+      body {
+        font: 13px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        width: 320px;
+        margin: 0;
+        padding: 14px 16px;
+        color: #1a1a1a;
+      }
+      h1 { font-size: 15px; margin: 0 0 10px; }
+      .status { padding: 8px 10px; border-radius: 6px; font-size: 12px; margin: 12px 0; }
+      .ok { background: #e7f6ec; color: #11633a; }
+      .warn { background: #fdecea; color: #a31515; }
+      code { background: #f1f1f1; padding: 1px 5px; border-radius: 4px; }
+      .muted { color: #666; font-size: 12px; }
+      ol { padding-left: 18px; margin: 6px 0 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Anonymous Address-Bar Search</h1>
+
+    <p class="muted">
+      In the address bar, type <code>a</code> then a space then your query —
+      e.g. <code>a best coffee nearby</code> — to search Google in a
+      logged-out Private window. Everything else stays signed in.
+    </p>
+
+    <div id="incStatus" class="status"></div>
+
+    <div id="incHelp" class="status warn" style="display: none">
+      <strong>Turn on Private access so it can work:</strong>
+      <ol>
+        <li>Open <code>brave://extensions</code></li>
+        <li>Click <em>Details</em> on this extension</li>
+        <li>Enable <em>Allow in Private/Tor windows</em></li>
+      </ol>
+    </div>
+
+    <script src="ui.js"></script>
+  </body>
+</html>

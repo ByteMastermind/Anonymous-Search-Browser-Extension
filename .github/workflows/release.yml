@@ -1,0 +1,64 @@
+name: Release extension
+
+on:
+  push:
+    branches: [main]
+
+# Allow the workflow to create tags + releases.
+permissions:
+  contents: write
+
+# Never let two pushes race to create the same release.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate sources
+        run: |
+          jq empty manifest.json
+          node --check background.js
+          node --check ui.js
+
+      - name: Read version from manifest.json
+        id: meta
+        run: |
+          VERSION="$(jq -r '.version' manifest.json)"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "manifest.json version: $VERSION"
+
+      - name: Skip if this version was already released
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ steps.meta.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release ${{ steps.meta.outputs.tag }} already exists — nothing to do."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Package extension
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          ZIP="anonymous-search-extension-${{ steps.meta.outputs.version }}.zip"
+          zip "$ZIP" manifest.json background.js ui.html ui.js
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
+
+      - name: Create GitHub release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.meta.outputs.tag }}" \
+            "$ZIP" \
+            --title "${{ steps.meta.outputs.tag }}" \
+            --generate-notes
