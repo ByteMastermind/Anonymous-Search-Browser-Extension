@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Anonymous Address-Bar Search",
+  "version": "0.1.0",
+  "description": "Type \"a <query>\" in the address bar to search Google in a logged-out Private window. All other browsing stays signed in.",
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_popup": "ui.html",
+    "default_title": "Anonymous Address-Bar Search"
+  },
+  "options_ui": { "page": "ui.html", "open_in_tab": false },
+  "omnibox": { "keyword": "a" },
+  "incognito": "spanning"
+}
